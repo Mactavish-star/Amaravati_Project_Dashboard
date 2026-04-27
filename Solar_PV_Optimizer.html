@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microgrid / Optimal Sizing & Financial Analysis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+<style>
+  :root {
+    --bg:        #f5f0e8;
+    --bg2:       #ede8dc;
+    --bg3:       #e4dfd3;
+    --panel:     #edeae2;
+    --panel2:    #e6e2d8;
+    --border:    #c8c2b2;
+    --border2:   #b8b2a2;
+    --text:      #1a1612;
+    --text2:     #4a4038;
+    --text3:     #7a7060;
+    --accent:    #c8840a;
+    --accent2:   #1a6b4a;
+    --accent3:   #8b2020;
+    --accent4:   #1a4a7a;
+    --gold:      #c8840a;
+    --green:     #1a8a50;
+    --red:       #c83030;
+    --blue:      #2060a0;
+    --badge-bg:  #1a1612;
+    --badge-text:#f5f0e8;
+    --sf:        -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --sfmono:    "SF Mono", ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+    --mono:      "SF Mono", ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+    --sans:      -apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --body:      -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    --radius:    4px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .topbar {
+    background: var(--text);
+    color: var(--bg);
+    padding: .55rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 4px solid var(--gold);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .version-badge {
+    background: var(--gold);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: .58rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    padding: .22rem .55rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .topbar h1 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    color: var(--bg);
+  }
+  .topbar h1 span { color: var(--gold); }
+  .live-indicators {
+    display: flex; gap: 2rem; align-items: flex-start;
+  }
+  .live-ind {
+    display: flex; flex-direction: column; align-items: flex-end;
+  }
+  .live-ind .lbl {
+    font-family: var(--mono);
+    font-size: .55rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #6a5a48;
+  }
+  .live-ind .val {
+    font-family: var(--mono);
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--bg);
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 270px 1fr 240px;
+    min-height: calc(100vh - 52px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 1.2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  .sb-section-title {
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .6rem;
+  }
+  .sb-group { display: flex; flex-direction: column; gap: .75rem; }
+  .sb-field label {
+    display: block;
+    font-family: var(--mono);
+    font-size: .60rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .28rem;
+  }
+  .sb-field input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%; height: 3px;
+    background: var(--border2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .sb-field input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 2px solid var(--text);
+    cursor: pointer;
+  }
+  .sb-field input[type="number"] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: .78rem;
+    padding: .35rem .6rem;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .sb-field input[type="number"]:focus { border-color: var(--gold); }
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .range-val {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--gold);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* action buttons */
+  .btn {
+    width: 100%;
+    padding: .6rem .9rem;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: .68rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .18s;
+    border: 1px solid;
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+  }
+  .btn-primary {
+    background: var(--text);
+    color: var(--gold);
+    border-color: var(--text);
+  }
+  .btn-primary:hover { background: #2a2018; border-color: var(--gold); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+    border-color: var(--border2);
+  }
+  .btn-secondary:hover { border-color: var(--text2); color: var(--text); }
+
+  /* ── MAIN ── */
+  .main {
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    overflow-x: hidden;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: .60rem;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .8rem;
+  }
+
+  /* ── LOAD TABLE ── */
+  .load-table-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .load-table-header {
+    background: var(--panel2);
+    padding: .6rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .load-table-header span {
+    font-family: var(--mono);
+    font-size: .60rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .paste-hint {
+    font-family: var(--mono);
+    font-size: .58rem;
+    color: var(--accent);
+    background: rgba(200,132,10,.12);
+    border: 1px solid rgba(200,132,10,.3);
+    padding: .18rem .55rem;
+    border-radius: 2px;
+  }
+  .load-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 1px;
+    background: var(--border);
+    padding: 1px;
+  }
+  .load-cell {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    padding: .35rem .5rem;
+  }
+  .load-cell .hr-lbl {
+    font-family: var(--mono);
+    font-size: .52rem;
+    color: var(--text3);
+    letter-spacing: .06em;
+    margin-bottom: .15rem;
+  }
+  .load-cell input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: .80rem;
+    font-weight: 500;
+    width: 100%;
+    outline: none;
+    padding: .1rem 0;
+    transition: border-color .15s;
+  }
+  .load-cell input:focus {
+    border-bottom-color: var(--gold);
+  }
+  .load-cell input:hover {
+    border-bottom-color: var(--border2);
+  }
+  /* paste target overlay */
+  .paste-zone {
+    padding: .5rem 1rem;
+    border-top: 1px solid var(--border);
+    background: var(--panel2);
+  }
+  .paste-zone textarea {
+    width: 100%;
+    height: 46px;
+    background: var(--bg3);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: .72rem;
+    padding: .4rem .6rem;
+    resize: none;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .paste-zone textarea:focus { border-color: var(--gold); border-style: solid; }
+  .paste-zone label {
+    display: block;
+    font-family: var(--mono);
+    font-size: .56rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .3rem;
+  }
+
+  /* ── OPTIMIZER STATUS ── */
+  .opt-status {
+    padding: .65rem 1rem;
+    border-radius: var(--radius);
+    font-family: var(--body);
+    font-size: .78rem;
+    border-left: 3px solid;
+    display: none;
+  }
+  .opt-status.ok   { background: rgba(26,138,80,.10);  border-color: var(--green); color: #0a5a30; }
+  .opt-status.warn { background: rgba(200,48,48,.08);  border-color: var(--red);   color: #8b2020; }
+  .opt-status.info { background: rgba(200,132,10,.10); border-color: var(--gold);  color: #7a4800; }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .kpi-cell {
+    background: var(--panel);
+    padding: .9rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+  }
+  .kpi-cell .val {
+    font-family: var(--sans);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .kpi-cell .lbl {
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .kpi-cell .sub {
+    font-family: var(--mono);
+    font-size: .65rem;
+    color: var(--text3);
+  }
+
+  /* ── CHARTS ── */
+  .chart-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .chart-header {
+    background: var(--panel2);
+    padding: .55rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: .60rem;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  #powerChart, #socChart { width: 100%; }
+
+  /* ── FINANCIALS ── */
+  .fin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .fin-col {
+    background: var(--panel);
+    padding: .8rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+  .fin-metric { display: flex; flex-direction: column; gap: .12rem; }
+  .fin-metric .lbl {
+    font-family: var(--mono);
+    font-size: .57rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .fin-metric .val {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* payback banner */
+  .pb-banner {
+    background: var(--panel2);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pb-banner .t {
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .3rem;
+  }
+  .pb-banner .v {
+    font-family: var(--sans);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -.04em;
+  }
+  .pb-banner .n {
+    font-family: var(--mono);
+    font-size: .65rem;
+    color: var(--text3);
+    text-align: right;
+  }
+  .pb-banner .n span {
+    display: block;
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    margin-top: .2rem;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .rightpanel {
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    padding: 1.2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  /* score ring area */
+  .score-section { display: flex; flex-direction: column; gap: .8rem; }
+  .score-ring-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem 0;
+  }
+  .score-row {
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+  .score-item { display: flex; flex-direction: column; gap: .2rem; }
+  .score-item .si-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .score-item .si-lbl {
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .score-item .si-val {
+    font-family: var(--mono);
+    font-size: .72rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .score-item .si-delta {
+    font-family: var(--mono);
+    font-size: .55rem;
+    color: var(--green);
+  }
+  .score-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .5s ease;
+  }
+
+  /* econ cards */
+  .econ-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .econ-cell {
+    background: var(--bg);
+    padding: .7rem .8rem;
+  }
+  .econ-cell .lbl {
+    font-family: var(--mono);
+    font-size: .55rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .2rem;
+  }
+  .econ-cell .val {
+    font-family: var(--sans);
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .econ-cell .sub {
+    font-family: var(--mono);
+    font-size: .60rem;
+    color: var(--text3);
+  }
+
+  /* bottom charts row */
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .bottom-cell {
+    background: var(--panel);
+    padding: .6rem;
+  }
+  .bottom-cell .chart-header2 {
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: .5rem;
+  }
+
+  /* footer */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: .6rem 1.6rem;
+    font-family: var(--mono);
+    font-size: .58rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--border2);
+    background: var(--panel);
+  }
+
+  /* badge */
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .58rem;
+    font-weight: 500;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: .15rem .5rem;
+    border-radius: 2px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+  }
+  .badge.gold  { background: var(--gold);  color: var(--text); }
+  .badge.green { background: var(--green); color: #fff; }
+  .badge.red   { background: var(--red);   color: #fff; }
+  .badge.blue  { background: var(--blue);  color: #fff; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* spinner */
+  .spin {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid rgba(200,132,10,.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div>
+      <h1>Microgrid <span>Industrial / Optimal Sizing</span> &amp; Financial Analysis</h1>
+    </div>
+  </div>
+  <div class="live-indicators">
+    <div class="live-ind">
+      <span class="lbl">Solar kW</span>
+      <span class="val" id="li-solar">—</span>
+    </div>
+    <div class="live-ind">
+      <span class="lbl">Battery kWh</span>
+      <span class="val" id="li-bat">—</span>
+    </div>
+    <div class="live-ind">
+      <span class="lbl">Coverage</span>
+      <span class="val" id="li-cov">—</span>
+    </div>
+    <div class="live-ind">
+      <span class="lbl">Payback</span>
+      <span class="val" id="li-pb">—</span>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div>
+      <div class="sb-section-title">Actions</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <button class="btn btn-primary" id="btnOptimize">
+          <span id="optSpinner" style="display:none" class="spin"></span>
+          Optimize Parameters
+        </button>
+        <button class="btn btn-secondary" id="btnReset">Reset to Default</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-title">Solar</div>
+      <div class="sb-group">
+        <div class="sb-field">
+          <label>Solar Contribution (%)</label>
+          <div class="range-row">
+            <input type="range" id="sf_pct" min="0" max="100" value="70">
+            <span class="range-val" id="sf_pct_v">70%</span>
+          </div>
+        </div>
+        <div class="sb-field">
+          <label>Peak Sun Hours (h/day)</label>
+          <input type="number" id="psh" value="5.0" min="0.5" max="12" step="0.5">
+        </div>
+        <div class="sb-field">
+          <label>Solar Generation Efficiency</label>
+          <div class="range-row">
+            <input type="range" id="sol_eff" min="50" max="100" value="80">
+            <span class="range-val" id="sol_eff_v">0.80</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-title">Battery</div>
+      <div class="sb-group">
+        <div class="sb-field">
+          <label>Depth of Discharge (DOD)</label>
+          <div class="range-row">
+            <input type="range" id="dod" min="50" max="100" value="80">
+            <span class="range-val" id="dod_v">0.80</span>
+          </div>
+        </div>
+        <div class="sb-field">
+          <label>Round-trip Efficiency</label>
+          <div class="range-row">
+            <input type="range" id="bat_eff" min="70" max="100" value="90">
+            <span class="range-val" id="bat_eff_v">0.90</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-title">Costs</div>
+      <div class="sb-group">
+        <div class="sb-field">
+          <label>Solar (Rs/kW)</label>
+          <input type="number" id="sol_cst" value="50000" step="1000">
+        </div>
+        <div class="sb-field">
+          <label>Battery (Rs/kWh)</label>
+          <input type="number" id="bat_cst" value="15000" step="500">
+        </div>
+        <div class="sb-field">
+          <label>Grid Tariff (Rs/kWh)</label>
+          <input type="number" id="grd_cst" value="8" step="0.5">
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sb-section-title">Operations</div>
+      <div class="sb-group">
+        <div class="sb-field">
+          <label>Annual O&amp;M (% of CAPEX)</label>
+          <div class="range-row">
+            <input type="range" id="om_pct" min="0" max="10" value="2" step="0.1">
+            <span class="range-val" id="om_pct_v">2.0%</span>
+          </div>
+        </div>
+        <div class="sb-field">
+          <label>Target Payback (years)</label>
+          <div class="range-row">
+            <input type="range" id="tgt_pb" min="1" max="15" value="6">
+            <span class="range-val" id="tgt_pb_v">6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- Optimizer status -->
+    <div class="opt-status" id="optStatus"></div>
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi-cell">
+        <span class="val" id="kpi-solar">—</span>
+        <span class="lbl">Solar Capacity</span>
+        <span class="sub" id="kpi-solar-sub">—</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="val" id="kpi-bat">—</span>
+        <span class="lbl">Battery Storage</span>
+        <span class="sub" id="kpi-bat-sub">—</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="val" id="kpi-cov">—</span>
+        <span class="lbl">Solar Coverage</span>
+        <span class="sub" id="kpi-cov-sub">—</span>
+      </div>
+      <div class="kpi-cell">
+        <span class="val" id="kpi-capex">—</span>
+        <span class="lbl">Total CAPEX</span>
+        <span class="sub" id="kpi-capex-sub">—</span>
+      </div>
+    </div>
+
+    <!-- Load profile -->
+    <div>
+      <p class="section-title">Hourly Load Profile — Editable</p>
+      <div class="load-table-wrap">
+        <div class="load-table-header">
+          <span>24-Hour Load Profile (kW)</span>
+          <span class="paste-hint">↓ Paste from Excel below</span>
+        </div>
+        <div class="load-grid" id="loadGrid"></div>
+        <div class="paste-zone">
+          <label>Paste tab-separated or comma-separated values (24 values) from Excel</label>
+          <textarea id="pasteArea" placeholder="Paste 24 values here, e.g. 6439,5579,5359... or tab-separated from Excel"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div>
+      <p class="section-title">Power Flow</p>
+      <div class="chart-wrap">
+        <div class="chart-header">Power Flow (kW) — Solar · Load · Grid Import</div>
+        <div id="powerChart" style="height:300px"></div>
+      </div>
+    </div>
+
+    <div>
+      <p class="section-title">Battery State of Charge</p>
+      <div class="chart-wrap">
+        <div class="chart-header">Battery State of Charge (kWh)</div>
+        <div id="socChart" style="height:200px"></div>
+      </div>
+    </div>
+
+    <!-- Financial breakdown -->
+    <div>
+      <p class="section-title">Financial Breakdown</p>
+      <div class="fin-grid">
+        <div class="fin-col">
+          <div class="fin-metric">
+            <span class="lbl">Daily Baseline Cost</span>
+            <span class="val" id="f-base-d">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Daily Grid Cost</span>
+            <span class="val" id="f-act-d">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Daily Savings</span>
+            <span class="val" id="f-sav-d" style="color:var(--green)">—</span>
+          </div>
+        </div>
+        <div class="fin-col">
+          <div class="fin-metric">
+            <span class="lbl">Annual Gross Savings</span>
+            <span class="val" id="f-sav-y">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Annual O&amp;M Cost</span>
+            <span class="val" id="f-om-y">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Annual Net Savings</span>
+            <span class="val" id="f-net-y" style="color:var(--green)">—</span>
+          </div>
+        </div>
+        <div class="fin-col">
+          <div class="fin-metric">
+            <span class="lbl">Solar CAPEX</span>
+            <span class="val" id="f-s-cap">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Battery CAPEX</span>
+            <span class="val" id="f-b-cap">—</span>
+          </div>
+          <div class="fin-metric">
+            <span class="lbl">Total CAPEX</span>
+            <span class="val" id="f-tot-cap">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payback banner -->
+    <div class="pb-banner" id="pbBanner">
+      <div>
+        <div class="t">Simple Payback Period</div>
+        <div class="v" id="pb-val">—</div>
+      </div>
+      <div class="n">
+        Net savings over 10 years<br>
+        <span id="pb-roi10">—</span>
+      </div>
+    </div>
+
+    <!-- Bottom charts -->
+    <p class="section-title">Capital Structure &amp; Cumulative Cash Flow</p>
+    <div class="bottom-row">
+      <div class="bottom-cell">
+        <div class="chart-header2">CAPEX Breakdown</div>
+        <div id="donutChart" style="height:240px"></div>
+      </div>
+      <div class="bottom-cell">
+        <div class="chart-header2">Cumulative Cash Flow — 20 yr horizon</div>
+        <div id="cfChart" style="height:240px"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Microgrid Optimal Sizing &amp; Financial Analysis // Simple payback does not account for inflation, degradation, or time-value of money.
+    </div>
+  </main>
+
+  <!-- ── RIGHT PANEL ── -->
+  <aside class="rightpanel">
+    <div class="sb-section-title" style="margin-bottom:.2rem">Overall Score</div>
+    <div class="score-ring-wrap">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
+        <circle id="scoreRing" cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" stroke-width="8"
+          stroke-dasharray="251" stroke-dashoffset="251" stroke-linecap="round"
+          transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .6s ease"/>
+        <text id="scoreText" x="50" y="46" text-anchor="middle" font-family="-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif"
+          font-size="20" font-weight="800" fill="var(--text)">—</text>
+        <text id="scoreGrade" x="50" y="62" text-anchor="middle" font-family="'SF Mono',ui-monospace,'Cascadia Code',monospace"
+          font-size="9" letter-spacing="1" fill="var(--text3)">—</text>
+      </svg>
+    </div>
+
+    <div class="score-row" id="scoreRows">
+      <!-- filled by JS -->
+    </div>
+
+    <hr class="divider">
+    <div class="sb-section-title">Economy</div>
+    <div class="econ-grid">
+      <div class="econ-cell">
+        <div class="lbl">Total Investment</div>
+        <div class="val" id="ec-inv">—</div>
+        <div class="sub">committed</div>
+      </div>
+      <div class="econ-cell">
+        <div class="lbl">Compliance Cost</div>
+        <div class="val" id="ec-comp">—</div>
+        <div class="sub">total/year</div>
+      </div>
+      <div class="econ-cell">
+        <div class="lbl">Active Systems</div>
+        <div class="val" id="ec-sys">—</div>
+        <div class="sub">components</div>
+      </div>
+      <div class="econ-cell">
+        <div class="lbl">Coverage</div>
+        <div class="val" id="ec-cov">—</div>
+        <div class="sub">solar share</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="sb-section-title">Policy Indicators</div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;" id="policyBadges">
+      <!-- filled by JS -->
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// ───────────────────────────────────────────────────────────────
+// HELPERS
+// ───────────────────────────────────────────────────────────────
+function fmtINR(v) {
+  if (v >= 1e7) return `Rs ${(v/1e7).toFixed(2)} Cr`;
+  if (v >= 1e5) return `Rs ${(v/1e5).toFixed(2)} L`;
+  return `Rs ${v.toLocaleString('en-IN', {maximumFractionDigits:0})}`;
+}
+
+function paybackStr(y) {
+  if (!isFinite(y) || y <= 0) return null;
+  const td = y * 365;
+  const yrs = Math.floor(td / 365);
+  const mos = Math.floor((td % 365) / 30);
+  const dys = Math.floor((td % 365) % 30);
+  const parts = [];
+  if (yrs) parts.push(`${yrs} yr${yrs !== 1 ? 's' : ''}`);
+  if (mos) parts.push(`${mos} mo`);
+  if (dys) parts.push(`${dys} d`);
+  return parts.join('  ') || '< 1 day';
+}
+
+function simulate(sg, lp, bkwh, beff) {
+  const smin = 0.20 * bkwh, smax = 0.90 * bkwh;
+  let soc = 0.50 * bkwh;
+  const socArr = [], gridArr = [], stateArr = [];
+  for (let t = 0; t < 24; t++) {
+    const net = sg[t] - lp[t];
+    let state;
+    if (net > 0) {
+      const ch = Math.min(net, smax - soc);
+      soc += ch * beff;
+      gridArr.push(0);
+      state = ch > 1e-3 ? 'charging' : 'idle';
+    } else {
+      const dis = (soc > smin) ? Math.min(-net, soc - smin) : 0;
+      soc -= dis;
+      gridArr.push(Math.max(0, -net - dis));
+      state = dis > 1e-3 ? 'discharging' : 'idle';
+    }
+    socArr.push(soc); stateArr.push(state);
+  }
+  return { socArr, gridArr, stateArr };
+}
+
+function sizeBattery(sg, lp, dod, beff, skw) {
+  const ec = sg.map((v, i) => v - lp[i]);
+  let cum = 0, min = 0, max = 0;
+  ec.forEach(v => { cum += v; if (cum < min) min = cum; if (cum > max) max = cum; });
+  return Math.min((max - min) / (dod * beff), 2.0 * skw);
+}
+
+function solarShape() {
+  const hrs = Array.from({length:24}, (_, i) => i);
+  const raw = hrs.map(h => Math.max(0, Math.sin((h - 6) / 12 * Math.PI)));
+  const mx = Math.max(...raw);
+  return raw.map(v => v / mx);
+}
+
+// ───────────────────────────────────────────────────────────────
+// STATE
+// ───────────────────────────────────────────────────────────────
+const DEFAULT_LOAD = [6439,5579,5359,5119,4930,4901,5066,5763,5514,5096,5279,5510,
+                      5322,5505,5710,5924,5861,6004,6185,7704,7853,7919,8221,7935];
+
+let loadProfile = [...DEFAULT_LOAD];
+let optFraction = null;
+const SHAPE = solarShape();
+
+// ───────────────────────────────────────────────────────────────
+// LOAD GRID
+// ───────────────────────────────────────────────────────────────
+function buildLoadGrid() {
+  const grid = document.getElementById('loadGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 24; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'load-cell';
+    cell.innerHTML = `<span class="hr-lbl">${String(i).padStart(2,'0')}:00</span>
+      <input type="number" id="lc_${i}" value="${loadProfile[i]}" min="0" step="100">`;
+    grid.appendChild(cell);
+  }
+  for (let i = 0; i < 24; i++) {
+    document.getElementById(`lc_${i}`).addEventListener('change', () => {
+      loadProfile[i] = parseFloat(document.getElementById(`lc_${i}`).value) || 0;
+      debouncedUpdate();
+    });
+  }
+}
+
+function syncLoadGrid() {
+  for (let i = 0; i < 24; i++) {
+    const el = document.getElementById(`lc_${i}`);
+    if (el) el.value = loadProfile[i];
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// PARAMS
+// ───────────────────────────────────────────────────────────────
+function getParams() {
+  return {
+    sf_pct:  parseFloat(document.getElementById('sf_pct').value) / 100,
+    psh:     parseFloat(document.getElementById('psh').value),
+    sol_eff: parseFloat(document.getElementById('sol_eff').value) / 100,
+    dod:     parseFloat(document.getElementById('dod').value) / 100,
+    bat_eff: parseFloat(document.getElementById('bat_eff').value) / 100,
+    sol_cst: parseFloat(document.getElementById('sol_cst').value),
+    bat_cst: parseFloat(document.getElementById('bat_cst').value),
+    grd_cst: parseFloat(document.getElementById('grd_cst').value),
+    om_pct:  parseFloat(document.getElementById('om_pct').value) / 100,
+    tgt_pb:  parseFloat(document.getElementById('tgt_pb').value),
+  };
+}
+
+// ───────────────────────────────────────────────────────────────
+// COMPUTE
+// ───────────────────────────────────────────────────────────────
+function compute(lp, params, fraction) {
+  const {psh, sol_eff, dod, bat_eff, sol_cst, bat_cst, grd_cst, om_pct} = params;
+  const dailyE = lp.reduce((a, b) => a + b, 0);
+  const peakL  = Math.max(...lp);
+  const actF   = fraction !== null ? fraction : params.sf_pct;
+
+  const solKW  = (dailyE * actF) / (psh * sol_eff);
+  const solGen = SHAPE.map(v => v * solKW);
+  const batKwh = sizeBattery(solGen, lp, dod, bat_eff, solKW);
+  const { socArr, gridArr, stateArr } = simulate(solGen, lp, batKwh, bat_eff);
+
+  const sCap = solKW * sol_cst;
+  const bCap = batKwh * bat_cst;
+  const totCap = sCap + bCap;
+  const grdE = gridArr.reduce((a, b) => a + b, 0);
+  const baseD = dailyE * grd_cst;
+  const actD  = grdE * grd_cst;
+  const savD  = baseD - actD;
+  const savY  = savD * 365;
+  const omY   = totCap * om_pct;
+  const netY  = savY - omY;
+  const pb    = netY > 0 ? (totCap / netY) : Infinity;
+  const cov   = 100 * (1 - grdE / dailyE);
+
+  return { solKW, solGen, batKwh, socArr, gridArr, stateArr,
+           sCap, bCap, totCap, grdE, baseD, actD, savD, savY, omY, netY, pb, cov,
+           dailyE, peakL, actF };
+}
+
+// ───────────────────────────────────────────────────────────────
+// OPTIMISER
+// ───────────────────────────────────────────────────────────────
+function runOptimiser(lp, params) {
+  const { psh, sol_eff, dod, bat_eff, sol_cst, bat_cst, grd_cst, om_pct, tgt_pb } = params;
+  const dailyE = lp.reduce((a, b) => a + b, 0);
+  const valid = [];
+  for (let i = 0; i <= 60; i++) {
+    const f = 0.30 + (0.70 * i / 60);
+    const sk = (dailyE * f) / (psh * sol_eff);
+    const sg = SHAPE.map(v => v * sk);
+    const bk = sizeBattery(sg, lp, dod, bat_eff, sk);
+    const cap = sk * sol_cst + bk * bat_cst;
+    const { gridArr } = simulate(sg, lp, bk, bat_eff);
+    const gu = gridArr.reduce((a, b) => a + b, 0);
+    const ns = (dailyE - gu) * grd_cst * 365 - cap * om_pct;
+    if (ns > 0 && (cap / ns) <= tgt_pb) valid.push({ f, pb: cap / ns });
+  }
+  if (valid.length) {
+    const best = valid.reduce((a, b) => b.f > a.f ? b : a);
+    return best;
+  }
+  return null;
+}
+
+// ───────────────────────────────────────────────────────────────
+// CHARTS (Plotly)
+// ───────────────────────────────────────────────────────────────
+const SF = '-apple-system,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif';
+const SFM = '"SF Mono",ui-monospace,"Cascadia Code","Fira Mono",monospace';
+
+const PLT = {
+  paper_bgcolor: '#ede8dc',
+  plot_bgcolor: '#ede8dc',
+  font: { family: SF, size: 10, color: '#7a7060' },
+  xaxis: { gridcolor: '#c8c2b2', zeroline: false },
+  yaxis: { gridcolor: '#c8c2b2', zeroline: false },
+  legend: { bgcolor: 'rgba(0,0,0,0)', font: { size: 9, color: '#7a7060' },
+            orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'right', x: 1 },
+  margin: { l: 50, r: 20, t: 30, b: 36 },
+  hovermode: 'x unified',
+};
+
+const CS = '#c8840a', CL = '#1a4a7a', CG = '#c83030', CB = '#1a8a50';
+
+let chartsInit = false;
+
+function renderCharts(r) {
+  const hrs = Array.from({length:24}, (_, i) => i);
+
+  // Power flow
+  const pTraces = [
+    { x: hrs, y: r.solGen, name: 'Solar Generation', mode: 'lines',
+      line: { color: CS, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(200,132,10,0.10)' },
+    { x: hrs, y: loadProfile, name: 'Load', mode: 'lines',
+      line: { color: CL, width: 2.5 } },
+    { x: hrs, y: r.gridArr, name: 'Grid Import', mode: 'lines',
+      line: { color: CG, width: 2, dash: 'dot' }, fill: 'tozeroy', fillcolor: 'rgba(200,48,48,0.07)' },
+  ];
+  const pLayout = { ...PLT, height: 300,
+    xaxis: { ...PLT.xaxis, title: 'Hour of Day' },
+    yaxis: { ...PLT.yaxis, title: 'kW' } };
+
+  // SOC
+  const socTraces = [
+    { x: hrs, y: r.socArr, name: 'Battery SOC', mode: 'lines',
+      line: { color: CB, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(26,138,80,0.12)' },
+  ];
+  const minSOC = 0.20 * r.batKwh, maxSOC = 0.90 * r.batKwh;
+  const socLayout = {
+    ...PLT, height: 200,
+    xaxis: { ...PLT.xaxis, title: 'Hour of Day' },
+    yaxis: { ...PLT.yaxis, title: 'kWh',
+      range: [0, r.batKwh * 1.05] },
+    shapes: [
+      { type:'line', x0:0, x1:23, y0:minSOC, y1:minSOC, line:{color:'#7a4040',dash:'dash',width:1} },
+      { type:'line', x0:0, x1:23, y0:maxSOC, y1:maxSOC, line:{color:'#2a5a4a',dash:'dash',width:1} },
+    ],
+    annotations: [
+      { x:22, y:minSOC, xanchor:'right', yanchor:'bottom', text:'Min SOC 20%',
+        showarrow:false, font:{size:8,color:'#7a4040',family:SFM} },
+      { x:22, y:maxSOC, xanchor:'right', yanchor:'top', text:'Max SOC 90%',
+        showarrow:false, font:{size:8,color:'#2a5a4a',family:SFM} },
+    ],
+    margin: { ...PLT.margin, t: 20 },
+  };
+
+  // Donut
+  const dTraces = [{
+    type: 'pie', labels: ['Solar', 'Battery'], values: [r.sCap, r.bCap], hole: 0.62,
+    marker: { colors: ['rgba(200,132,10,0.85)', 'rgba(26,138,80,0.85)'],
+              line: { color: '#ede8dc', width: 3 } },
+    textinfo: 'label+percent',
+    textfont: { family: SFM, size: 9, color: '#4a4038' },
+    hovertemplate: '%{label}<br>%{value:,.0f}<br>%{percent}<extra></extra>',
+  }];
+  const dLayout = {
+    ...PLT, height: 240,
+    showlegend: false,
+    margin: { l:10, r:10, t:20, b:20 },
+    annotations: [{
+      text: `<b>${fmtINR(r.totCap)}</b><br><span style="font-size:8px">Total CAPEX</span>`,
+      x: 0.5, y: 0.5, showarrow: false,
+      font: { family: SF, size: 12, color: '#1a1612' }, align: 'center'
+    }]
+  };
+
+  // Cash flow
+  const ya = Array.from({length:21}, (_, i) => i);
+  const cf = ya.map(yr => -r.totCap + r.netY * yr);
+  const cfNeg = cf.map(v => v < 0 ? v : null);
+  const cfPos = cf.map(v => v >= 0 ? v : null);
+
+  const cfTraces = [
+    { x: ya, y: cfNeg, mode: 'lines', line: { color: CG, width: 2.5 },
+      connectgaps: false, showlegend: false },
+    { x: ya, y: cfPos, mode: 'lines', line: { color: CB, width: 2.5 },
+      fill: 'tozeroy', fillcolor: 'rgba(26,138,80,0.08)', connectgaps: false, showlegend: false },
+  ];
+  const cfAnnotations = [];
+  if (isFinite(r.pb) && r.pb <= 20) {
+    cfAnnotations.push({
+      x: r.pb, y: 0, xanchor: 'left', yanchor: 'bottom',
+      text: `Payback ${r.pb.toFixed(1)} yr`,
+      showarrow: true, arrowhead: 2, arrowcolor: CL,
+      font: { size: 8, color: CL, family: SFM }
+    });
+  }
+  const cfLayout = {
+    ...PLT, height: 240,
+    xaxis: { ...PLT.xaxis, title: 'Year', dtick: 2 },
+    yaxis: { ...PLT.yaxis, title: 'Cumulative (Rs)' },
+    annotations: cfAnnotations,
+    shapes: [{ type:'line', x0:0, x1:20, y0:0, y1:0, line:{color:'#c8c2b2',width:1} }],
+    margin: { l:70, r:20, t:20, b:40 },
+  };
+
+  const cfg = { responsive: true, displayModeBar: false };
+
+  if (!chartsInit) {
+    Plotly.newPlot('powerChart', pTraces, pLayout, cfg);
+    Plotly.newPlot('socChart',   socTraces, socLayout, cfg);
+    Plotly.newPlot('donutChart', dTraces, dLayout, cfg);
+    Plotly.newPlot('cfChart',    cfTraces, cfLayout, cfg);
+    chartsInit = true;
+  } else {
+    Plotly.react('powerChart', pTraces, pLayout, cfg);
+    Plotly.react('socChart',   socTraces, socLayout, cfg);
+    Plotly.react('donutChart', dTraces, dLayout, cfg);
+    Plotly.react('cfChart',    cfTraces, cfLayout, cfg);
+  }
+}
+
+// ───────────────────────────────────────────────────────────────
+// UPDATE UI
+// ───────────────────────────────────────────────────────────────
+function updateUI(r, params) {
+  // Live indicators
+  document.getElementById('li-solar').textContent = `${r.solKW.toFixed(1)} kW`;
+  document.getElementById('li-bat').textContent = `${r.batKwh.toFixed(1)} kWh`;
+  document.getElementById('li-cov').textContent = `${r.cov.toFixed(1)}%`;
+  document.getElementById('li-pb').textContent = paybackStr(r.pb) || '∞';
+
+  // KPIs
+  document.getElementById('kpi-solar').textContent = `${r.solKW.toFixed(1)} kW`;
+  document.getElementById('kpi-solar-sub').textContent = `${(r.actF*100).toFixed(1)}% of daily load`;
+  document.getElementById('kpi-bat').textContent = `${r.batKwh.toFixed(1)} kWh`;
+  document.getElementById('kpi-bat-sub').textContent = `${(r.batKwh/r.peakL*60).toFixed(0)} min at peak load`;
+  document.getElementById('kpi-cov').textContent = `${r.cov.toFixed(1)}%`;
+  document.getElementById('kpi-cov-sub').textContent = `${r.grdE.toFixed(0)} kWh/day from grid`;
+  document.getElementById('kpi-capex').textContent = fmtINR(r.totCap);
+  document.getElementById('kpi-capex-sub').textContent = `${fmtINR(r.sCap)} solar + ${fmtINR(r.bCap)} battery`;
+
+  // Financials
+  document.getElementById('f-base-d').textContent = fmtINR(r.baseD);
+  document.getElementById('f-act-d').textContent  = fmtINR(r.actD);
+  document.getElementById('f-sav-d').textContent  = fmtINR(r.savD);
+  document.getElementById('f-sav-y').textContent  = fmtINR(r.savY);
+  document.getElementById('f-om-y').textContent   = fmtINR(r.omY);
+  document.getElementById('f-net-y').textContent  = fmtINR(r.netY);
+  document.getElementById('f-s-cap').textContent  = fmtINR(r.sCap);
+  document.getElementById('f-b-cap').textContent  = fmtINR(r.bCap);
+  document.getElementById('f-tot-cap').textContent = fmtINR(r.totCap);
+
+  // Payback banner
+  const pbs = paybackStr(r.pb);
+  if (pbs) {
+    document.getElementById('pb-val').textContent = pbs;
+    document.getElementById('pb-roi10').textContent = fmtINR(r.netY * 10 - r.totCap);
+    document.getElementById('pbBanner').style.borderLeftColor = 'var(--gold)';
+  } else {
+    document.getElementById('pb-val').textContent = 'Not achievable';
+    document.getElementById('pb-roi10').textContent = '—';
+    document.getElementById('pbBanner').style.borderLeftColor = 'var(--red)';
+  }
+
+  // Score metrics
+  const covScore   = Math.round(Math.min(100, r.cov));
+  const envScore   = Math.round(Math.min(100, r.cov * 0.9));
+  const finScore   = isFinite(r.pb) ? Math.round(Math.min(100, (1 - r.pb / 15) * 100)) : 0;
+  const relScore   = Math.round(Math.min(100, r.cov * 0.85 + 10));
+  const roiScore   = Math.round(Math.min(100, Math.max(0, 100 - r.pb * 6)));
+  const overall    = Math.round((covScore + envScore + finScore + relScore + roiScore) / 5);
+
+  // Score ring
+  const circumf = 2 * Math.PI * 40;
+  const offset  = circumf * (1 - overall / 100);
+  const ring = document.getElementById('scoreRing');
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = overall >= 70 ? 'var(--green)' : overall >= 40 ? 'var(--gold)' : 'var(--red)';
+  document.getElementById('scoreText').textContent = overall;
+  document.getElementById('scoreGrade').textContent =
+    overall >= 90 ? 'EXCELLENT' : overall >= 70 ? 'GOOD' : overall >= 50 ? 'FAIR' : 'POOR';
+
+  const scoreItems = [
+    { label:'Coverage', val: covScore,  delta: '+' + (covScore > 80 ? '3' : '1') + '%', color: 'var(--green)' },
+    { label:'Env',      val: envScore,  delta: '+' + (envScore > 70 ? '2' : '0') + '%', color: 'var(--red)' },
+    { label:'Finance',  val: finScore,  delta: isFinite(r.pb) ? `PB ${r.pb.toFixed(1)}yr` : '∞', color: 'var(--gold)' },
+    { label:'Reliability', val: relScore, delta: `${r.solKW.toFixed(0)}kW`, color: 'var(--blue)' },
+    { label:'ROI',      val: roiScore,  delta: fmtINR(r.netY) + '/yr', color: 'var(--green)' },
+  ];
+
+  document.getElementById('scoreRows').innerHTML = scoreItems.map(it => `
+    <div class="score-item">
+      <div class="si-top">
+        <span class="si-lbl">${it.label}</span>
+        <div style="display:flex;align-items:center;gap:.4rem">
+          <span class="si-delta" style="color:${it.color}">${it.delta}</span>
+          <span class="si-val">${it.val}</span>
+        </div>
+      </div>
+      <div class="score-bar-bg">
+        <div class="score-bar-fill" style="width:${it.val}%;background:${it.color}"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Economy cells
+  document.getElementById('ec-inv').textContent  = fmtINR(r.totCap);
+  document.getElementById('ec-comp').textContent = fmtINR(r.omY);
+  document.getElementById('ec-sys').textContent  = '3';
+  document.getElementById('ec-cov').textContent  = `${r.cov.toFixed(1)}%`;
+
+  // Policy badges
+  const badges = [
+    { label:'Solar', status: r.cov > 60 ? 'COMMITTED' : 'WATCHING', color: r.cov > 60 ? 'green' : 'gold' },
+    { label:'Battery', status: r.batKwh > 100 ? 'COMMITTED' : 'WATCHING', color: r.batKwh > 100 ? 'green' : 'gold' },
+    { label:'Grid Dependence', status: r.cov > 80 ? 'LOW' : 'MODERATE', color: r.cov > 80 ? 'green' : 'red' },
+  ];
+  document.getElementById('policyBadges').innerHTML = badges.map(b => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem .5rem;background:var(--bg3);border:1px solid var(--border);border-radius:2px">
+      <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text2)">${b.label}</span>
+      <span class="badge ${b.color}">${b.status}</span>
+    </div>
+  `).join('');
+
+  renderCharts(r);
+}
+
+// ───────────────────────────────────────────────────────────────
+// MAIN UPDATE LOOP
+// ───────────────────────────────────────────────────────────────
+function update() {
+  const params = getParams();
+  const r = compute(loadProfile, params, optFraction);
+  updateUI(r, params);
+}
+
+let debounceTimer = null;
+function debouncedUpdate() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(update, 120);
+}
+
+// ───────────────────────────────────────────────────────────────
+// EVENT WIRING
+// ───────────────────────────────────────────────────────────────
+
+// Range sliders → display + update
+function wireRange(id, dispId, fmt) {
+  const el = document.getElementById(id);
+  const dsp = document.getElementById(dispId);
+  el.addEventListener('input', () => {
+    dsp.textContent = fmt(parseFloat(el.value));
+    optFraction = null;
+    debouncedUpdate();
+  });
+}
+wireRange('sf_pct',  'sf_pct_v',  v => `${v}%`);
+wireRange('sol_eff', 'sol_eff_v', v => (v/100).toFixed(2));
+wireRange('dod',     'dod_v',     v => (v/100).toFixed(2));
+wireRange('bat_eff', 'bat_eff_v', v => (v/100).toFixed(2));
+wireRange('om_pct',  'om_pct_v',  v => `${v.toFixed(1)}%`);
+wireRange('tgt_pb',  'tgt_pb_v',  v => `${v}`);
+
+['psh','sol_cst','bat_cst','grd_cst'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    optFraction = null;
+    debouncedUpdate();
+  });
+});
+
+// Optimise button
+document.getElementById('btnOptimize').addEventListener('click', () => {
+  const spinner = document.getElementById('optSpinner');
+  spinner.style.display = 'inline-block';
+  setTimeout(() => {
+    const params = getParams();
+    const result = runOptimiser(loadProfile, params);
+    const st = document.getElementById('optStatus');
+    st.style.display = 'block';
+    if (result) {
+      optFraction = result.f;
+      st.className = 'opt-status ok';
+      st.textContent = `Optimised at ${(result.f*100).toFixed(1)}% solar — payback ${result.pb.toFixed(2)} yrs — within ${params.tgt_pb} yr target`;
+      // sync slider
+      document.getElementById('sf_pct').value = Math.round(result.f * 100);
+      document.getElementById('sf_pct_v').textContent = `${Math.round(result.f*100)}%`;
+    } else {
+      optFraction = null;
+      st.className = 'opt-status warn';
+      st.textContent = 'No configuration meets the target payback. Increase target or adjust costs.';
+    }
+    spinner.style.display = 'none';
+    update();
+  }, 60);
+});
+
+// Reset
+document.getElementById('btnReset').addEventListener('click', () => {
+  loadProfile = [...DEFAULT_LOAD];
+  optFraction = null;
+  syncLoadGrid();
+  document.getElementById('sf_pct').value = 70; document.getElementById('sf_pct_v').textContent = '70%';
+  document.getElementById('sol_eff').value = 80; document.getElementById('sol_eff_v').textContent = '0.80';
+  document.getElementById('dod').value = 80; document.getElementById('dod_v').textContent = '0.80';
+  document.getElementById('bat_eff').value = 90; document.getElementById('bat_eff_v').textContent = '0.90';
+  document.getElementById('om_pct').value = 2; document.getElementById('om_pct_v').textContent = '2.0%';
+  document.getElementById('tgt_pb').value = 6; document.getElementById('tgt_pb_v').textContent = '6';
+  document.getElementById('psh').value = 5;
+  document.getElementById('sol_cst').value = 50000;
+  document.getElementById('bat_cst').value = 15000;
+  document.getElementById('grd_cst').value = 8;
+  document.getElementById('optStatus').style.display = 'none';
+  update();
+});
+
+// Paste from Excel
+document.getElementById('pasteArea').addEventListener('input', function() {
+  const raw = this.value.trim();
+  if (!raw) return;
+  const vals = raw.split(/[\t,;\s\n]+/).map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+  if (vals.length >= 24) {
+    loadProfile = vals.slice(0, 24);
+    syncLoadGrid();
+    optFraction = null;
+    debouncedUpdate();
+    this.style.borderColor = 'var(--green)';
+    setTimeout(() => { this.style.borderColor = ''; this.value = ''; }, 1200);
+  } else if (vals.length > 0) {
+    this.style.borderColor = 'var(--red)';
+  }
+});
+
+// Auto-optimize on any param change (live loop)
+const autoWatchIds = ['sf_pct','sol_eff','dod','bat_eff','om_pct','tgt_pb','psh','sol_cst','bat_cst','grd_cst'];
+autoWatchIds.forEach(id => {
+  document.getElementById(id).addEventListener('change', debouncedUpdate);
+});
+
+// ───────────────────────────────────────────────────────────────
+// INIT
+// ───────────────────────────────────────────────────────────────
+buildLoadGrid();
+update();
+</script>
+</body>
+</html>
