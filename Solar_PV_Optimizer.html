@@ -99,7 +99,7 @@
   /* ── LAYOUT ── */
   .layout {
     display: grid;
-    grid-template-columns: 270px 1fr 240px;
+    grid-template-columns: 270px 1fr;
     min-height: calc(100vh - 52px);
   }
 
@@ -465,99 +465,6 @@
     margin-top: .2rem;
   }
 
-  /* ── RIGHT PANEL ── */
-  .rightpanel {
-    background: var(--panel);
-    border-left: 1px solid var(--border);
-    padding: 1.2rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
-  }
-
-  /* score ring area */
-  .score-section { display: flex; flex-direction: column; gap: .8rem; }
-  .score-ring-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: .5rem 0;
-  }
-  .score-row {
-    display: flex;
-    flex-direction: column;
-    gap: .55rem;
-  }
-  .score-item { display: flex; flex-direction: column; gap: .2rem; }
-  .score-item .si-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .score-item .si-lbl {
-    font-family: var(--mono);
-    font-size: .58rem;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text3);
-  }
-  .score-item .si-val {
-    font-family: var(--mono);
-    font-size: .72rem;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .score-item .si-delta {
-    font-family: var(--mono);
-    font-size: .55rem;
-    color: var(--green);
-  }
-  .score-bar-bg {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .score-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width .5s ease;
-  }
-
-  /* econ cards */
-  .econ-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .econ-cell {
-    background: var(--bg);
-    padding: .7rem .8rem;
-  }
-  .econ-cell .lbl {
-    font-family: var(--mono);
-    font-size: .55rem;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text3);
-    margin-bottom: .2rem;
-  }
-  .econ-cell .val {
-    font-family: var(--sans);
-    font-size: .95rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-  .econ-cell .sub {
-    font-family: var(--mono);
-    font-size: .60rem;
-    color: var(--text3);
-  }
-
   /* bottom charts row */
   .bottom-row {
     display: grid;
@@ -615,6 +522,122 @@
     border: none;
     border-top: 1px solid var(--border);
   }
+
+  /* ── PERF METRICS STRIP ── */
+  .perf-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .perf-cell {
+    background: var(--panel);
+    padding: .75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .22rem;
+  }
+  .perf-cell .val {
+    font-family: var(--sans);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .perf-cell .lbl {
+    font-family: var(--mono);
+    font-size: .56rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .perf-cell .sub {
+    font-family: var(--mono);
+    font-size: .60rem;
+    color: var(--text3);
+  }
+
+  /* ── GRID METRICS ── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .metric-group {
+    background: var(--panel);
+    padding: .8rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+  .metric-group-title {
+    font-family: var(--mono);
+    font-size: .56rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding-bottom: .35rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .metric-item { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; }
+  .metric-item .m-lbl {
+    font-family: var(--mono);
+    font-size: .60rem;
+    color: var(--text3);
+  }
+  .metric-item .m-val {
+    font-family: var(--sans);
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* ── CARBON SECTION ── */
+  .carbon-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .carbon-cell {
+    background: var(--panel);
+    padding: .8rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .22rem;
+  }
+  .carbon-cell .val {
+    font-family: var(--sans);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .carbon-cell .lbl {
+    font-family: var(--mono);
+    font-size: .56rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .carbon-cell .sub {
+    font-family: var(--mono);
+    font-size: .60rem;
+    color: var(--text3);
+  }
+  .carbon-highlight {
+    border-left: 3px solid var(--green);
+  }
+  .carbon-highlight .val { color: var(--green); }
 
   /* spinner */
   .spin {
@@ -676,22 +699,20 @@
       <div class="sb-section-title">Solar</div>
       <div class="sb-group">
         <div class="sb-field">
-          <label>Solar Contribution (%)</label>
-          <div class="range-row">
-            <input type="range" id="sf_pct" min="0" max="100" value="70">
-            <span class="range-val" id="sf_pct_v">70%</span>
-          </div>
-        </div>
-        <div class="sb-field">
           <label>Peak Sun Hours (h/day)</label>
           <input type="number" id="psh" value="5.0" min="0.5" max="12" step="0.5">
         </div>
         <div class="sb-field">
-          <label>Solar Generation Efficiency</label>
+          <label>Solar Irradiance (%)</label>
           <div class="range-row">
-            <input type="range" id="sol_eff" min="50" max="100" value="80">
-            <span class="range-val" id="sol_eff_v">0.80</span>
+            <input type="range" id="solar_scale" min="0" max="100" value="100" step="1">
+            <span class="range-val" id="solar_scale_v">100%</span>
           </div>
+          <div style="display:flex;gap:.4rem;margin-top:.4rem">
+            <button class="btn btn-secondary" style="padding:.28rem .5rem;font-size:.58rem;width:auto" id="btnCloudy">Cloudy Day</button>
+            <button class="btn btn-secondary" style="padding:.28rem .5rem;font-size:.58rem;width:auto" id="btnNoSolar">No Solar</button>
+          </div>
+          <div style="font-family:var(--mono);font-size:.60rem;color:var(--text3);margin-top:.3rem" id="irradiance_label">Clear Sky</div>
         </div>
       </div>
     </div>
@@ -761,29 +782,98 @@
     <!-- Optimizer status -->
     <div class="opt-status" id="optStatus"></div>
 
-    <!-- KPI strip -->
-    <div class="kpi-strip">
-      <div class="kpi-cell">
+    <!-- SECTION 1: SYSTEM PERFORMANCE -->
+    <p class="section-title">§1 — System Performance</p>
+
+    <!-- Decision Status Tag -->
+    <!-- Performance KPI Strip (5 metrics) -->
+    <div class="perf-strip">
+      <div class="perf-cell">
         <span class="val" id="kpi-solar">—</span>
-        <span class="lbl">Solar Capacity</span>
-        <span class="sub" id="kpi-solar-sub">—</span>
+        <span class="lbl">Total Solar Energy</span>
+        <span class="sub">MWh/day</span>
       </div>
-      <div class="kpi-cell">
-        <span class="val" id="kpi-bat">—</span>
-        <span class="lbl">Battery Storage</span>
-        <span class="sub" id="kpi-bat-sub">—</span>
+      <div class="perf-cell">
+        <span class="val" id="kpi-self-suf">—</span>
+        <span class="lbl">Self Sufficiency</span>
+        <span class="sub" id="kpi-self-suf-sub">—</span>
       </div>
-      <div class="kpi-cell">
-        <span class="val" id="kpi-cov">—</span>
-        <span class="lbl">Solar Coverage</span>
-        <span class="sub" id="kpi-cov-sub">—</span>
+      <div class="perf-cell">
+        <span class="val" id="kpi-peak-shave">—</span>
+        <span class="lbl">Peak Shaving</span>
+        <span class="sub" id="kpi-peak-shave-sub">—</span>
       </div>
-      <div class="kpi-cell">
-        <span class="val" id="kpi-capex">—</span>
-        <span class="lbl">Total CAPEX</span>
-        <span class="sub" id="kpi-capex-sub">—</span>
+      <div class="perf-cell">
+        <span class="val" id="kpi-bat-util">—</span>
+        <span class="lbl">Battery Utilization</span>
+        <span class="sub" id="kpi-bat-util-sub">—</span>
       </div>
     </div>
+
+    <!-- Detailed Metrics Row -->
+    <div class="metrics-row">
+      <!-- Peak Shaving -->
+      <div class="metric-group">
+        <div class="metric-group-title">Peak Demand Analysis</div>
+        <div class="metric-item">
+          <span class="m-lbl">Peak Before (Grid only)</span>
+          <span class="m-val" id="m-peak-before">—</span>
+        </div>
+        <div class="metric-item">
+          <span class="m-lbl">Peak After (With Microgrid)</span>
+          <span class="m-val" id="m-peak-after">—</span>
+        </div>
+        <div class="metric-item">
+          <span class="m-lbl">Peak Reduction</span>
+          <span class="m-val" style="color:var(--green)" id="m-peak-reduction">—</span>
+        </div>
+      </div>
+      <!-- Grid Dependency -->
+      <div class="metric-group">
+        <div class="metric-group-title">Grid Dependency</div>
+        <div class="metric-item">
+          <span class="m-lbl">Grid Energy Used</span>
+          <span class="m-val" id="m-grid-energy">—</span>
+        </div>
+        <div class="metric-item">
+          <span class="m-lbl">Grid Dependency</span>
+          <span class="m-val" id="m-grid-dep">—</span>
+        </div>
+        <div class="metric-item">
+          <span class="m-lbl">Peak Grid Hour</span>
+          <span class="m-val" id="m-peak-grid-hr">—</span>
+        </div>
+      </div>
+      <!-- Battery -->
+      <div class="metric-group">
+        <div class="metric-group-title">Battery Analysis</div>
+        <div class="metric-item">
+          <span class="m-lbl">Cycles / Day</span>
+          <span class="m-val" id="m-bat-cycles">—</span>
+        </div>
+        <div class="metric-item">
+          <span class="m-lbl">Average SOC</span>
+          <span class="m-val" id="m-avg-soc">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden KPI IDs for backward compat -->
+    <div style="display:none">
+      <span id="kpi-bat">—</span>
+      <span id="kpi-bat-sub">—</span>
+      <span id="kpi-cov">—</span>
+      <span id="kpi-cov-sub">—</span>
+      <span id="kpi-capex">—</span>
+      <span id="kpi-capex-sub">—</span>
+      <span id="kpi-solar-sub">—</span>
+      <span id="info-solar">—</span>
+      <span id="info-load">—</span>
+      <span id="info-grid">—</span>
+    </div>
+
+    <!-- SECTION 2: ENERGY FLOW -->
+    <p class="section-title">§2 — Energy Flow</p>
 
     <!-- Load profile -->
     <div>
@@ -815,6 +905,36 @@
       <div class="chart-wrap">
         <div class="chart-header">Battery State of Charge (kWh)</div>
         <div id="socChart" style="height:200px"></div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: ECONOMICS & CARBON -->
+    <p class="section-title">§3 — Economics &amp; Environmental Impact</p>
+
+    <!-- Carbon Footprint -->
+    <div>
+      <p class="section-title">Carbon Footprint Analysis (CO₂ Emission Factor: 0.8 kg/kWh — India Grid)</p>
+      <div class="carbon-grid">
+        <div class="carbon-cell">
+          <span class="val" id="co2-without">—</span>
+          <span class="lbl">CO₂ Without Microgrid</span>
+          <span class="sub">tonnes/day (baseline)</span>
+        </div>
+        <div class="carbon-cell">
+          <span class="val" id="co2-with">—</span>
+          <span class="lbl">CO₂ With Microgrid</span>
+          <span class="sub">grid + system losses</span>
+        </div>
+        <div class="carbon-cell carbon-highlight">
+          <span class="val" id="co2-saved-day">—</span>
+          <span class="lbl">CO₂ Saved / Day</span>
+          <span class="sub" id="co2-pct">—</span>
+        </div>
+        <div class="carbon-cell carbon-highlight">
+          <span class="val" id="co2-saved-yr">—</span>
+          <span class="lbl">CO₂ Saved / Year</span>
+          <span class="sub">annualised reduction</span>
+        </div>
       </div>
     </div>
 
@@ -873,9 +993,15 @@
         <div class="t">Simple Payback Period</div>
         <div class="v" id="pb-val">—</div>
       </div>
-      <div class="n">
-        Net savings over 10 years<br>
-        <span id="pb-roi10">—</span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem">
+        <div class="n">
+          Net savings over 10 years<br>
+          <span id="pb-roi10">—</span>
+        </div>
+        <div class="n">
+          LCOE (Levelised Cost of Energy)<br>
+          <span id="pb-lcoe" style="color:var(--gold)">—</span>
+        </div>
       </div>
     </div>
 
@@ -897,57 +1023,7 @@
     </div>
   </main>
 
-  <!-- ── RIGHT PANEL ── -->
-  <aside class="rightpanel">
-    <div class="sb-section-title" style="margin-bottom:.2rem">Overall Score</div>
-    <div class="score-ring-wrap">
-      <svg width="100" height="100" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="8"/>
-        <circle id="scoreRing" cx="50" cy="50" r="40" fill="none" stroke="var(--gold)" stroke-width="8"
-          stroke-dasharray="251" stroke-dashoffset="251" stroke-linecap="round"
-          transform="rotate(-90 50 50)" style="transition:stroke-dashoffset .6s ease"/>
-        <text id="scoreText" x="50" y="46" text-anchor="middle" font-family="-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif"
-          font-size="20" font-weight="800" fill="var(--text)">—</text>
-        <text id="scoreGrade" x="50" y="62" text-anchor="middle" font-family="'SF Mono',ui-monospace,'Cascadia Code',monospace"
-          font-size="9" letter-spacing="1" fill="var(--text3)">—</text>
-      </svg>
-    </div>
 
-    <div class="score-row" id="scoreRows">
-      <!-- filled by JS -->
-    </div>
-
-    <hr class="divider">
-    <div class="sb-section-title">Economy</div>
-    <div class="econ-grid">
-      <div class="econ-cell">
-        <div class="lbl">Total Investment</div>
-        <div class="val" id="ec-inv">—</div>
-        <div class="sub">committed</div>
-      </div>
-      <div class="econ-cell">
-        <div class="lbl">Compliance Cost</div>
-        <div class="val" id="ec-comp">—</div>
-        <div class="sub">total/year</div>
-      </div>
-      <div class="econ-cell">
-        <div class="lbl">Active Systems</div>
-        <div class="val" id="ec-sys">—</div>
-        <div class="sub">components</div>
-      </div>
-      <div class="econ-cell">
-        <div class="lbl">Coverage</div>
-        <div class="val" id="ec-cov">—</div>
-        <div class="sub">solar share</div>
-      </div>
-    </div>
-
-    <hr class="divider">
-    <div class="sb-section-title">Policy Indicators</div>
-    <div style="display:flex;flex-direction:column;gap:.5rem;" id="policyBadges">
-      <!-- filled by JS -->
-    </div>
-  </aside>
 
 </div>
 
@@ -974,41 +1050,75 @@ function paybackStr(y) {
   return parts.join('  ') || '< 1 day';
 }
 
-function simulate(sg, lp, bkwh, beff) {
-  const smin = 0.20 * bkwh, smax = 0.90 * bkwh;
-  let soc = 0.50 * bkwh;
-  const socArr = [], gridArr = [], stateArr = [];
+// Fixed-plant dispatch: 10 MW solar, 20 MWh battery, 5 MW max charge/discharge power.
+// SOC starts at 50% at midnight. Round-trip efficiency applied on charge and discharge.
+// Grid = unmet load after solar and battery are exhausted.
+const SOLAR_INSTALLED_MW = 10;
+const BAT_CAPACITY_MWH   = 20;
+const BAT_POWER_MW       = 5;    // max charge and discharge rate (4-hour battery)
+const BAT_EFF            = 0.9;  // round-trip efficiency per half-cycle
+
+function simulate(sg, lp) {
+  // Peak-shaving dispatch: only discharge when grid demand exceeds average load.
+  // Reactive dispatch drains battery on small mid-afternoon deficits, leaving
+  // SOC=0 when the real evening peak arrives. This strategy holds charge in
+  // reserve for high-demand hours (19:00-23:00).
+  const avgLoad = lp.reduce((a, b) => a + b, 0) / lp.length;
+  const dischThreshold = avgLoad; // MW — discharge only above this level
+
+  let soc = 0;  // start empty; charged fresh from solar each day
+  const socArr = [], gridArr = [], batArr = [], stateArr = [];
+
   for (let t = 0; t < 24; t++) {
-    const net = sg[t] - lp[t];
-    let state;
+    const net = sg[t] - lp[t]; // positive=surplus, negative=deficit
+    let bat = 0, grid = 0, state;
+
     if (net > 0) {
-      const ch = Math.min(net, smax - soc);
-      soc += ch * beff;
-      gridArr.push(0);
-      state = ch > 1e-3 ? 'charging' : 'idle';
+      // SURPLUS: charge battery up to power and capacity limits
+      const headroom = BAT_CAPACITY_MWH - soc;
+      const ch = Math.min(net, BAT_POWER_MW, headroom);
+      soc += ch * BAT_EFF;
+      bat  = -ch;  // negative = charging
+      grid = 0;
+      state = ch > 1e-4 ? 'charging' : 'idle';
+
     } else {
-      const dis = (soc > smin) ? Math.min(-net, soc - smin) : 0;
-      soc -= dis;
-      gridArr.push(Math.max(0, -net - dis));
-      state = dis > 1e-3 ? 'discharging' : 'idle';
+      // DEFICIT: only discharge when demand exceeds threshold (peak shaving)
+      const rawGrid = -net; // what grid must supply without battery
+      let dis = 0;
+      if (rawGrid > dischThreshold) {
+        dis = Math.min(rawGrid - dischThreshold, BAT_POWER_MW, soc);
+      }
+      if (dis > 0) { soc -= dis / BAT_EFF; if (soc < 0) soc = 0; }
+      bat  = dis;
+      grid = Math.max(0, rawGrid - dis);
+      state = dis > 1e-4 ? 'discharging' : 'idle';
     }
-    socArr.push(soc); stateArr.push(state);
+
+    socArr.push(soc);
+    gridArr.push(grid);
+    batArr.push(bat);
+    stateArr.push(state);
   }
-  return { socArr, gridArr, stateArr };
+  return { socArr, gridArr, batArr, stateArr };
 }
 
-function sizeBattery(sg, lp, dod, beff, skw) {
-  const ec = sg.map((v, i) => v - lp[i]);
-  let cum = 0, min = 0, max = 0;
-  ec.forEach(v => { cum += v; if (cum < min) min = cum; if (cum > max) max = cum; });
-  return Math.min((max - min) / (dod * beff), 2.0 * skw);
-}
+// ───────────────────────────────────────────────────────────────
+// SOLAR SHAPE — derived from real 10 MW 24-hour generation profile
+// ───────────────────────────────────────────────────────────────
+const SOLAR_PROFILE_RAW = [
+  0, 0, 0, 0, 0, 0,
+  0.53, 2.63, 4.74, 7.43, 10,
+  8.78, 8.72, 7.19, 5.6, 3.09,
+  0.85, 0, 0, 0, 0, 0, 0, 0
+];
+const SOLAR_PROFILE_PEAK = Math.max(...SOLAR_PROFILE_RAW); // 10
 
-function solarShape() {
-  const hrs = Array.from({length:24}, (_, i) => i);
-  const raw = hrs.map(h => Math.max(0, Math.sin((h - 6) / 12 * Math.PI)));
-  const mx = Math.max(...raw);
-  return raw.map(v => v / mx);
+function buildShape(scalePct) {
+  // Returns hourly solar generation in MW for the fixed 10 MW plant.
+  // scalePct is 0–100 representing irradiance percentage.
+  const scale = scalePct / 100;
+  return SOLAR_PROFILE_RAW.map(v => (v / SOLAR_PROFILE_PEAK) * SOLAR_INSTALLED_MW * scale);
 }
 
 // ───────────────────────────────────────────────────────────────
@@ -1018,8 +1128,19 @@ const DEFAULT_LOAD = [6439,5579,5359,5119,4930,4901,5066,5763,5514,5096,5279,551
                       5322,5505,5710,5924,5861,6004,6185,7704,7853,7919,8221,7935];
 
 let loadProfile = [...DEFAULT_LOAD];
-let optFraction = null;
-const SHAPE = solarShape();
+
+const solarSlider = document.getElementById('solar_scale');
+const solarVal    = document.getElementById('solar_scale_v');
+
+function getShape() {
+  return buildShape(parseFloat(solarSlider.value));
+}
+
+function irradianceLabel(v) {
+  if (v < 30) return 'Heavy Cloud';
+  if (v < 70) return 'Partial Cloud';
+  return 'Clear Sky';
+}
 
 // ───────────────────────────────────────────────────────────────
 // LOAD GRID
@@ -1054,11 +1175,8 @@ function syncLoadGrid() {
 // ───────────────────────────────────────────────────────────────
 function getParams() {
   return {
-    sf_pct:  parseFloat(document.getElementById('sf_pct').value) / 100,
     psh:     parseFloat(document.getElementById('psh').value),
-    sol_eff: parseFloat(document.getElementById('sol_eff').value) / 100,
     dod:     parseFloat(document.getElementById('dod').value) / 100,
-    bat_eff: parseFloat(document.getElementById('bat_eff').value) / 100,
     sol_cst: parseFloat(document.getElementById('sol_cst').value),
     bat_cst: parseFloat(document.getElementById('bat_cst').value),
     grd_cst: parseFloat(document.getElementById('grd_cst').value),
@@ -1070,57 +1188,129 @@ function getParams() {
 // ───────────────────────────────────────────────────────────────
 // COMPUTE
 // ───────────────────────────────────────────────────────────────
-function compute(lp, params, fraction) {
-  const {psh, sol_eff, dod, bat_eff, sol_cst, bat_cst, grd_cst, om_pct} = params;
-  const dailyE = lp.reduce((a, b) => a + b, 0);
-  const peakL  = Math.max(...lp);
-  const actF   = fraction !== null ? fraction : params.sf_pct;
+function compute(lp, params) {
+  const { sol_cst, bat_cst, grd_cst, om_pct } = params;
 
-  const solKW  = (dailyE * actF) / (psh * sol_eff);
-  const solGen = SHAPE.map(v => v * solKW);
-  const batKwh = sizeBattery(solGen, lp, dod, bat_eff, solKW);
-  const { socArr, gridArr, stateArr } = simulate(solGen, lp, batKwh, bat_eff);
+  // Load is stored in kW; convert to MW for dispatch
+  const lpMW   = lp.map(v => v / 1000);
+  const dailyE = lpMW.reduce((a, b) => a + b, 0);   // MWh/day
+  const peakL  = Math.max(...lpMW);                  // MW
 
-  const sCap = solKW * sol_cst;
-  const bCap = batKwh * bat_cst;
+  // Fixed plant sizes
+  const solKW  = SOLAR_INSTALLED_MW * 1000;          // kW (for CAPEX / KPI display)
+  const batKwh = BAT_CAPACITY_MWH * 1000;            // kWh (for CAPEX / KPI display)
+
+  // Hourly solar generation (MW) from real profile + irradiance adjustment
+  const solGenMW = getShape();
+
+  // Dispatch simulation (all in MW / MWh)
+  const { socArr, gridArr, batArr, stateArr } = simulate(solGenMW, lpMW);
+
+  // Convert SOC back to kWh for chart axis consistency
+  const socArrKwh = socArr.map(v => v * 1000);
+
+  // Solar generation in kW for chart (matches load scale)
+  const solGen = solGenMW.map(v => v * 1000);
+
+  // Grid in kW for chart
+  const gridArrKw = gridArr.map(v => v * 1000);
+
+  // Financials
+  const grdE   = gridArr.reduce((a, b) => a + b, 0); // MWh from grid per day
+  const sCap   = solKW  * sol_cst;
+  const bCap   = batKwh * bat_cst;
   const totCap = sCap + bCap;
-  const grdE = gridArr.reduce((a, b) => a + b, 0);
-  const baseD = dailyE * grd_cst;
-  const actD  = grdE * grd_cst;
-  const savD  = baseD - actD;
-  const savY  = savD * 365;
-  const omY   = totCap * om_pct;
-  const netY  = savY - omY;
-  const pb    = netY > 0 ? (totCap / netY) : Infinity;
-  const cov   = 100 * (1 - grdE / dailyE);
+  const baseD  = dailyE * 1000 * grd_cst;   // Rs/day if all from grid (kWh * Rs/kWh)
+  const actD   = grdE   * 1000 * grd_cst;   // Rs/day actual grid cost
+  const savD   = baseD - actD;
+  const savY   = savD * 365;
+  const omY    = totCap * om_pct;
+  const netY   = savY - omY;
+  const pb     = netY > 0 ? (totCap / netY) : Infinity;
+  const cov    = 100 * (1 - grdE / dailyE);
+  const actF   = 1 - grdE / dailyE;         // solar + battery coverage fraction
 
-  return { solKW, solGen, batKwh, socArr, gridArr, stateArr,
-           sCap, bCap, totCap, grdE, baseD, actD, savD, savY, omY, netY, pb, cov,
-           dailyE, peakL, actF };
+  // MWh energy totals (timestep = 1 h, so sum of hourly MW = MWh)
+  const totalSolarMWh = solGenMW.reduce((a, b) => a + b, 0);
+  const totalLoadMWh  = dailyE;
+  const totalGridMWh  = grdE;
+
+  // ── PEAK SHAVING ──
+  const peakBefore = peakL;                          // max(loadProfile) in MW
+  const peakAfter  = Math.max(...gridArr);           // max(gridProfile) in MW
+  const peakReduction = peakBefore > 0 ? (peakBefore - peakAfter) / peakBefore : 0;
+
+  // ── SELF SUFFICIENCY ──
+  const selfSufficiency = totalLoadMWh > 0 ? (totalLoadMWh - totalGridMWh) / totalLoadMWh : 0;
+
+  // ── GRID DEPENDENCY ──
+  const gridDependency = totalLoadMWh > 0 ? totalGridMWh / totalLoadMWh : 0;
+  const peakGridHour   = gridArr.indexOf(Math.max(...gridArr));
+
+  // ── BATTERY UTILIZATION ──
+  // batArr values from simulate() are in MW (same unit as solar/load).
+  // Sum directly to get MWh (1-hour timestep → MW × 1h = MWh).
+  const chargeEnergy    = batArr.filter(v => v < 0).reduce((a, v) => a + Math.abs(v), 0); // MWh
+  const dischargeEnergy = batArr.filter(v => v > 0).reduce((a, v) => a + v, 0);           // MWh
+  const throughput      = chargeEnergy + dischargeEnergy;
+  const batUtilization  = BAT_CAPACITY_MWH > 0 ? dischargeEnergy / BAT_CAPACITY_MWH : 0;
+  const batCycles       = BAT_CAPACITY_MWH > 0 ? throughput / (2 * BAT_CAPACITY_MWH) : 0;
+  // socArr (raw from simulate) is in MWh; average over 24 hours, normalise to capacity
+  const avgSOC          = BAT_CAPACITY_MWH > 0
+    ? (socArr.reduce((a, b) => a + b, 0) / (24 * BAT_CAPACITY_MWH)) * 100
+    : 0;
+
+  // ── CARBON FOOTPRINT (India factor = 0.8 kg/kWh) ──
+  const CO2_FACTOR      = 0.8;  // kg/kWh
+  const LOSS_FRACTION   = 0.05; // 5% system losses assumption
+  const co2Without      = totalLoadMWh * 1000 * CO2_FACTOR / 1000;    // tonnes/day
+  const co2GridPart     = totalGridMWh  * 1000 * CO2_FACTOR / 1000;   // tonnes/day
+  const co2LossPart     = totalLoadMWh * LOSS_FRACTION * 1000 * CO2_FACTOR / 1000;
+  const co2With         = co2GridPart + co2LossPart;                  // tonnes/day
+  const co2SavedDay     = co2Without - co2With;                        // tonnes/day
+  const co2SavedYear    = co2SavedDay * 365;                           // tonnes/year
+  const co2ReductionPct = co2Without > 0 ? co2SavedDay / co2Without : 0;
+
+  // ── LCOE ──
+  // LCOE = TotalCost / TotalEnergyOver25yr = (CAPEX + 25*OM) / (25*365*solarMWh * 1000 kWh)
+  const LIFE_YEARS      = 25;
+  const totalCostLCOE   = totCap + LIFE_YEARS * omY;
+  const totalEnergyKwh  = totalSolarMWh * 1000 * 365 * LIFE_YEARS;
+  const lcoeRsKwh       = totalEnergyKwh > 0 ? totalCostLCOE / totalEnergyKwh : 0;
+
+  return {
+    solKW, solGen, batKwh, batArr,
+    socArr: socArrKwh, gridArr: gridArrKw, stateArr,
+    sCap, bCap, totCap, grdE, baseD, actD, savD, savY, omY, netY, pb, cov,
+    dailyE, peakL, actF,
+    totalSolarMWh, totalLoadMWh, totalGridMWh,
+    // new
+    peakBefore, peakAfter, peakReduction,
+    selfSufficiency, gridDependency, peakGridHour,
+    chargeEnergy, dischargeEnergy, batUtilization, batCycles, avgSOC,
+    co2Without, co2With, co2SavedDay, co2SavedYear, co2ReductionPct,
+    lcoeRsKwh
+  };
 }
 
 // ───────────────────────────────────────────────────────────────
-// OPTIMISER
+// OPTIMISER — fixed 10 MW solar + 20 MWh battery
+// Reports payback for the current irradiance setting.
 // ───────────────────────────────────────────────────────────────
 function runOptimiser(lp, params) {
-  const { psh, sol_eff, dod, bat_eff, sol_cst, bat_cst, grd_cst, om_pct, tgt_pb } = params;
-  const dailyE = lp.reduce((a, b) => a + b, 0);
-  const valid = [];
-  for (let i = 0; i <= 60; i++) {
-    const f = 0.30 + (0.70 * i / 60);
-    const sk = (dailyE * f) / (psh * sol_eff);
-    const sg = SHAPE.map(v => v * sk);
-    const bk = sizeBattery(sg, lp, dod, bat_eff, sk);
-    const cap = sk * sol_cst + bk * bat_cst;
-    const { gridArr } = simulate(sg, lp, bk, bat_eff);
-    const gu = gridArr.reduce((a, b) => a + b, 0);
-    const ns = (dailyE - gu) * grd_cst * 365 - cap * om_pct;
-    if (ns > 0 && (cap / ns) <= tgt_pb) valid.push({ f, pb: cap / ns });
-  }
-  if (valid.length) {
-    const best = valid.reduce((a, b) => b.f > a.f ? b : a);
-    return best;
-  }
+  const { sol_cst, bat_cst, grd_cst, om_pct, tgt_pb } = params;
+  const lpMW   = lp.map(v => v / 1000);
+  const dailyE = lpMW.reduce((a, b) => a + b, 0);
+  const solKW  = SOLAR_INSTALLED_MW * 1000;
+  const batKwh = BAT_CAPACITY_MWH  * 1000;
+  const cap    = solKW * sol_cst + batKwh * bat_cst;
+  const sg     = getShape();
+  const { gridArr } = simulate(sg, lpMW);
+  const gu  = gridArr.reduce((a, b) => a + b, 0);
+  const ns  = (dailyE - gu) * 1000 * grd_cst * 365 - cap * om_pct;
+  const pb  = ns > 0 ? cap / ns : Infinity;
+  const adjPct = parseFloat(solarSlider.value);
+  if (ns > 0 && pb <= tgt_pb) return { pb, adjPct };
   return null;
 }
 
@@ -1149,7 +1339,8 @@ let chartsInit = false;
 function renderCharts(r) {
   const hrs = Array.from({length:24}, (_, i) => i);
 
-  // Power flow
+  // Power flow — include battery dispatch (kW, negative=charging, positive=discharging)
+  const batArrKw = r.batArr.map(v => v * 1000);
   const pTraces = [
     { x: hrs, y: r.solGen, name: 'Solar Generation', mode: 'lines',
       line: { color: CS, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(200,132,10,0.10)' },
@@ -1157,30 +1348,27 @@ function renderCharts(r) {
       line: { color: CL, width: 2.5 } },
     { x: hrs, y: r.gridArr, name: 'Grid Import', mode: 'lines',
       line: { color: CG, width: 2, dash: 'dot' }, fill: 'tozeroy', fillcolor: 'rgba(200,48,48,0.07)' },
+    { x: hrs, y: batArrKw, name: 'Battery (+dis / -chg)', mode: 'lines',
+      line: { color: CB, width: 1.8, dash: 'dash' } },
   ];
   const pLayout = { ...PLT, height: 300,
     xaxis: { ...PLT.xaxis, title: 'Hour of Day' },
     yaxis: { ...PLT.yaxis, title: 'kW' } };
 
-  // SOC
+  // SOC — 0 to BAT_CAPACITY_MWH (20 MWh = 20000 kWh), starts empty
   const socTraces = [
     { x: hrs, y: r.socArr, name: 'Battery SOC', mode: 'lines',
       line: { color: CB, width: 2.5 }, fill: 'tozeroy', fillcolor: 'rgba(26,138,80,0.12)' },
   ];
-  const minSOC = 0.20 * r.batKwh, maxSOC = 0.90 * r.batKwh;
   const socLayout = {
     ...PLT, height: 200,
     xaxis: { ...PLT.xaxis, title: 'Hour of Day' },
-    yaxis: { ...PLT.yaxis, title: 'kWh',
-      range: [0, r.batKwh * 1.05] },
+    yaxis: { ...PLT.yaxis, title: 'kWh', range: [0, r.batKwh * 1.05] },
     shapes: [
-      { type:'line', x0:0, x1:23, y0:minSOC, y1:minSOC, line:{color:'#7a4040',dash:'dash',width:1} },
-      { type:'line', x0:0, x1:23, y0:maxSOC, y1:maxSOC, line:{color:'#2a5a4a',dash:'dash',width:1} },
+      { type:'line', x0:0, x1:23, y0:r.batKwh, y1:r.batKwh, line:{color:'#2a5a4a',dash:'dash',width:1} },
     ],
     annotations: [
-      { x:22, y:minSOC, xanchor:'right', yanchor:'bottom', text:'Min SOC 20%',
-        showarrow:false, font:{size:8,color:'#7a4040',family:SFM} },
-      { x:22, y:maxSOC, xanchor:'right', yanchor:'top', text:'Max SOC 90%',
+      { x:22, y:r.batKwh, xanchor:'right', yanchor:'top', text:'Full capacity',
         showarrow:false, font:{size:8,color:'#2a5a4a',family:SFM} },
     ],
     margin: { ...PLT.margin, t: 20 },
@@ -1257,20 +1445,62 @@ function renderCharts(r) {
 // ───────────────────────────────────────────────────────────────
 function updateUI(r, params) {
   // Live indicators
-  document.getElementById('li-solar').textContent = `${r.solKW.toFixed(1)} kW`;
+  document.getElementById('li-solar').textContent = `${r.totalSolarMWh.toFixed(2)} MWh`;
   document.getElementById('li-bat').textContent = `${r.batKwh.toFixed(1)} kWh`;
   document.getElementById('li-cov').textContent = `${r.cov.toFixed(1)}%`;
   document.getElementById('li-pb').textContent = paybackStr(r.pb) || '∞';
 
-  // KPIs
-  document.getElementById('kpi-solar').textContent = `${r.solKW.toFixed(1)} kW`;
+  // ── SECTION 1: SYSTEM PERFORMANCE ──
+
+  // Performance KPI strip
+  document.getElementById('kpi-solar').textContent = `${r.totalSolarMWh.toFixed(2)} MWh`;
+  document.getElementById('kpi-self-suf').textContent = `${(r.selfSufficiency*100).toFixed(1)}%`;
+  document.getElementById('kpi-self-suf-sub').textContent =
+    `${r.totalGridMWh.toFixed(2)} MWh/day from grid`;
+  document.getElementById('kpi-peak-shave').textContent = `${(r.peakReduction*100).toFixed(1)}%`;
+  document.getElementById('kpi-peak-shave-sub').textContent =
+    `${r.peakBefore.toFixed(2)} → ${r.peakAfter.toFixed(2)} MW`;
+  document.getElementById('kpi-bat-util').textContent = `${(r.batUtilization*100).toFixed(1)}%`;
+  document.getElementById('kpi-bat-util-sub').textContent =
+    `${r.batCycles.toFixed(2)} cycles/day · avg SOC ${r.avgSOC.toFixed(1)}%`;
+
+  // Peak shaving details
+  document.getElementById('m-peak-before').textContent = `${r.peakBefore.toFixed(2)} MW`;
+  document.getElementById('m-peak-after').textContent  = `${r.peakAfter.toFixed(2)} MW`;
+  document.getElementById('m-peak-reduction').textContent = `${(r.peakReduction*100).toFixed(1)}%`;
+
+  // Grid dependency details
+  document.getElementById('m-grid-energy').textContent = `${r.totalGridMWh.toFixed(2)} MWh/day`;
+  document.getElementById('m-grid-dep').textContent = `${(r.gridDependency*100).toFixed(1)}%`;
+  document.getElementById('m-peak-grid-hr').textContent =
+    `${String(r.peakGridHour).padStart(2,'0')}:00`;
+
+  // Battery details
+  document.getElementById('m-bat-cycles').textContent = `${r.batCycles.toFixed(2)}`;
+  document.getElementById('m-avg-soc').textContent    = `${r.avgSOC.toFixed(1)}%`;
+
+  // ── KPIs (backward compat hidden elements) ──
   document.getElementById('kpi-solar-sub').textContent = `${(r.actF*100).toFixed(1)}% of daily load`;
   document.getElementById('kpi-bat').textContent = `${r.batKwh.toFixed(1)} kWh`;
   document.getElementById('kpi-bat-sub').textContent = `${(r.batKwh/r.peakL*60).toFixed(0)} min at peak load`;
   document.getElementById('kpi-cov').textContent = `${r.cov.toFixed(1)}%`;
-  document.getElementById('kpi-cov-sub').textContent = `${r.grdE.toFixed(0)} kWh/day from grid`;
+  document.getElementById('kpi-cov-sub').textContent = `${r.totalGridMWh.toFixed(2)} MWh/day from grid`;
   document.getElementById('kpi-capex').textContent = fmtINR(r.totCap);
   document.getElementById('kpi-capex-sub').textContent = `${fmtINR(r.sCap)} solar + ${fmtINR(r.bCap)} battery`;
+
+  // MWh info bar (hidden)
+  document.getElementById('info-solar').textContent = r.totalSolarMWh.toFixed(2);
+  document.getElementById('info-load').textContent  = r.totalLoadMWh.toFixed(2);
+  document.getElementById('info-grid').textContent  = r.totalGridMWh.toFixed(2);
+
+  // ── SECTION 3: ECONOMICS ──
+
+  // Carbon Footprint
+  document.getElementById('co2-without').textContent  = `${r.co2Without.toFixed(1)} t`;
+  document.getElementById('co2-with').textContent     = `${r.co2With.toFixed(1)} t`;
+  document.getElementById('co2-saved-day').textContent = `${r.co2SavedDay.toFixed(1)} t`;
+  document.getElementById('co2-pct').textContent      = `${(r.co2ReductionPct*100).toFixed(1)}% reduction`;
+  document.getElementById('co2-saved-yr').textContent = `${(r.co2SavedYear/1000).toFixed(2)} kt`;
 
   // Financials
   document.getElementById('f-base-d').textContent = fmtINR(r.baseD);
@@ -1294,66 +1524,8 @@ function updateUI(r, params) {
     document.getElementById('pb-roi10').textContent = '—';
     document.getElementById('pbBanner').style.borderLeftColor = 'var(--red)';
   }
-
-  // Score metrics
-  const covScore   = Math.round(Math.min(100, r.cov));
-  const envScore   = Math.round(Math.min(100, r.cov * 0.9));
-  const finScore   = isFinite(r.pb) ? Math.round(Math.min(100, (1 - r.pb / 15) * 100)) : 0;
-  const relScore   = Math.round(Math.min(100, r.cov * 0.85 + 10));
-  const roiScore   = Math.round(Math.min(100, Math.max(0, 100 - r.pb * 6)));
-  const overall    = Math.round((covScore + envScore + finScore + relScore + roiScore) / 5);
-
-  // Score ring
-  const circumf = 2 * Math.PI * 40;
-  const offset  = circumf * (1 - overall / 100);
-  const ring = document.getElementById('scoreRing');
-  ring.style.strokeDashoffset = offset;
-  ring.style.stroke = overall >= 70 ? 'var(--green)' : overall >= 40 ? 'var(--gold)' : 'var(--red)';
-  document.getElementById('scoreText').textContent = overall;
-  document.getElementById('scoreGrade').textContent =
-    overall >= 90 ? 'EXCELLENT' : overall >= 70 ? 'GOOD' : overall >= 50 ? 'FAIR' : 'POOR';
-
-  const scoreItems = [
-    { label:'Coverage', val: covScore,  delta: '+' + (covScore > 80 ? '3' : '1') + '%', color: 'var(--green)' },
-    { label:'Env',      val: envScore,  delta: '+' + (envScore > 70 ? '2' : '0') + '%', color: 'var(--red)' },
-    { label:'Finance',  val: finScore,  delta: isFinite(r.pb) ? `PB ${r.pb.toFixed(1)}yr` : '∞', color: 'var(--gold)' },
-    { label:'Reliability', val: relScore, delta: `${r.solKW.toFixed(0)}kW`, color: 'var(--blue)' },
-    { label:'ROI',      val: roiScore,  delta: fmtINR(r.netY) + '/yr', color: 'var(--green)' },
-  ];
-
-  document.getElementById('scoreRows').innerHTML = scoreItems.map(it => `
-    <div class="score-item">
-      <div class="si-top">
-        <span class="si-lbl">${it.label}</span>
-        <div style="display:flex;align-items:center;gap:.4rem">
-          <span class="si-delta" style="color:${it.color}">${it.delta}</span>
-          <span class="si-val">${it.val}</span>
-        </div>
-      </div>
-      <div class="score-bar-bg">
-        <div class="score-bar-fill" style="width:${it.val}%;background:${it.color}"></div>
-      </div>
-    </div>
-  `).join('');
-
-  // Economy cells
-  document.getElementById('ec-inv').textContent  = fmtINR(r.totCap);
-  document.getElementById('ec-comp').textContent = fmtINR(r.omY);
-  document.getElementById('ec-sys').textContent  = '3';
-  document.getElementById('ec-cov').textContent  = `${r.cov.toFixed(1)}%`;
-
-  // Policy badges
-  const badges = [
-    { label:'Solar', status: r.cov > 60 ? 'COMMITTED' : 'WATCHING', color: r.cov > 60 ? 'green' : 'gold' },
-    { label:'Battery', status: r.batKwh > 100 ? 'COMMITTED' : 'WATCHING', color: r.batKwh > 100 ? 'green' : 'gold' },
-    { label:'Grid Dependence', status: r.cov > 80 ? 'LOW' : 'MODERATE', color: r.cov > 80 ? 'green' : 'red' },
-  ];
-  document.getElementById('policyBadges').innerHTML = badges.map(b => `
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:.4rem .5rem;background:var(--bg3);border:1px solid var(--border);border-radius:2px">
-      <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text2)">${b.label}</span>
-      <span class="badge ${b.color}">${b.status}</span>
-    </div>
-  `).join('');
+  document.getElementById('pb-lcoe').textContent =
+    r.lcoeRsKwh > 0 ? `Rs ${r.lcoeRsKwh.toFixed(2)}/kWh` : '—';
 
   renderCharts(r);
 }
@@ -1363,7 +1535,7 @@ function updateUI(r, params) {
 // ───────────────────────────────────────────────────────────────
 function update() {
   const params = getParams();
-  const r = compute(loadProfile, params, optFraction);
+  const r = compute(loadProfile, params);
   updateUI(r, params);
 }
 
@@ -1383,20 +1555,39 @@ function wireRange(id, dispId, fmt) {
   const dsp = document.getElementById(dispId);
   el.addEventListener('input', () => {
     dsp.textContent = fmt(parseFloat(el.value));
-    optFraction = null;
+    
     debouncedUpdate();
   });
 }
-wireRange('sf_pct',  'sf_pct_v',  v => `${v}%`);
-wireRange('sol_eff', 'sol_eff_v', v => (v/100).toFixed(2));
 wireRange('dod',     'dod_v',     v => (v/100).toFixed(2));
 wireRange('bat_eff', 'bat_eff_v', v => (v/100).toFixed(2));
 wireRange('om_pct',  'om_pct_v',  v => `${v.toFixed(1)}%`);
 wireRange('tgt_pb',  'tgt_pb_v',  v => `${v}`);
 
+// Solar irradiance slider
+solarSlider.addEventListener('input', () => {
+  const v = parseFloat(solarSlider.value);
+  solarVal.textContent = v + '%';
+  document.getElementById('irradiance_label').textContent = irradianceLabel(v);
+  debouncedUpdate();
+});
+
+// Cloudy Day / No Solar buttons
+document.getElementById('btnCloudy').addEventListener('click', () => {
+  solarSlider.value = 50;
+  solarVal.textContent = '50%';
+  document.getElementById('irradiance_label').textContent = irradianceLabel(50);
+  debouncedUpdate();
+});
+document.getElementById('btnNoSolar').addEventListener('click', () => {
+  solarSlider.value = 0;
+  solarVal.textContent = '0%';
+  document.getElementById('irradiance_label').textContent = irradianceLabel(0);
+  debouncedUpdate();
+});
+
 ['psh','sol_cst','bat_cst','grd_cst'].forEach(id => {
   document.getElementById(id).addEventListener('change', () => {
-    optFraction = null;
     debouncedUpdate();
   });
 });
@@ -1411,29 +1602,23 @@ document.getElementById('btnOptimize').addEventListener('click', () => {
     const st = document.getElementById('optStatus');
     st.style.display = 'block';
     if (result) {
-      optFraction = result.f;
       st.className = 'opt-status ok';
-      st.textContent = `Optimised at ${(result.f*100).toFixed(1)}% solar — payback ${result.pb.toFixed(2)} yrs — within ${params.tgt_pb} yr target`;
-      // sync slider
-      document.getElementById('sf_pct').value = Math.round(result.f * 100);
-      document.getElementById('sf_pct_v').textContent = `${Math.round(result.f*100)}%`;
+      st.textContent = `Fixed 10 MW solar + 20 MWh battery — payback ${result.pb.toFixed(2)} yrs at ${result.adjPct}% irradiance — within ${params.tgt_pb} yr target`;
     } else {
-      optFraction = null;
       st.className = 'opt-status warn';
-      st.textContent = 'No configuration meets the target payback. Increase target or adjust costs.';
+      st.textContent = 'Fixed plant does not meet target payback at current irradiance. Adjust costs or target.';
     }
     spinner.style.display = 'none';
     update();
   }, 60);
 });
 
-// Reset
 document.getElementById('btnReset').addEventListener('click', () => {
   loadProfile = [...DEFAULT_LOAD];
-  optFraction = null;
   syncLoadGrid();
-  document.getElementById('sf_pct').value = 70; document.getElementById('sf_pct_v').textContent = '70%';
-  document.getElementById('sol_eff').value = 80; document.getElementById('sol_eff_v').textContent = '0.80';
+  solarSlider.value = 100;
+  solarVal.textContent = '100%';
+  document.getElementById('irradiance_label').textContent = irradianceLabel(100);
   document.getElementById('dod').value = 80; document.getElementById('dod_v').textContent = '0.80';
   document.getElementById('bat_eff').value = 90; document.getElementById('bat_eff_v').textContent = '0.90';
   document.getElementById('om_pct').value = 2; document.getElementById('om_pct_v').textContent = '2.0%';
@@ -1454,7 +1639,7 @@ document.getElementById('pasteArea').addEventListener('input', function() {
   if (vals.length >= 24) {
     loadProfile = vals.slice(0, 24);
     syncLoadGrid();
-    optFraction = null;
+    
     debouncedUpdate();
     this.style.borderColor = 'var(--green)';
     setTimeout(() => { this.style.borderColor = ''; this.value = ''; }, 1200);
@@ -1464,7 +1649,7 @@ document.getElementById('pasteArea').addEventListener('input', function() {
 });
 
 // Auto-optimize on any param change (live loop)
-const autoWatchIds = ['sf_pct','sol_eff','dod','bat_eff','om_pct','tgt_pb','psh','sol_cst','bat_cst','grd_cst'];
+const autoWatchIds = ['dod','bat_eff','om_pct','tgt_pb','psh','sol_cst','bat_cst','grd_cst'];
 autoWatchIds.forEach(id => {
   document.getElementById(id).addEventListener('change', debouncedUpdate);
 });
